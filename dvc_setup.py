@@ -53,17 +53,17 @@ def main():
     drive_folder_id = '14OTN7AaJJlXYzOuRuEjeCAldEEds4ZWN'
     github_repo_url = 'https://github.com/joudabihaidar/data-version-control-setup.git'
 
-    # Initializing a Git and DVC repository 
-    initialize_dvc_git_repo(repo_path)
+    # # Initializing a Git and DVC repository 
+    # initialize_dvc_git_repo(repo_path)
 
-    # adding a remote GitHub repository URL to the local Git repository
-    add_remote(github_repo_url)
+    # # adding a remote GitHub repository URL to the local Git repository
+    # add_remote(github_repo_url)
 
-    # Configuring DVC remote storage with Google Drive
-    configure_dvc_remote(repo_path, remote_name, drive_folder_id)
+    # # Configuring DVC remote storage with Google Drive
+    # configure_dvc_remote(repo_path, remote_name, drive_folder_id)
 
-    # Track data file with DVC and push to remote storage
-    add_and_track_data(repo_path, data_file)
+    # # Track data file with DVC and push to remote storage
+    # add_and_track_data(repo_path, data_file)
 
     # Push changes to GitHub
     change_and_version_data(repo_path,data_file)
