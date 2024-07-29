@@ -2,9 +2,6 @@ import os
 import subprocess
 
 def run_command(command):
-    """
-    This function executes a system command and print its output.
-    """
     result=subprocess.run(command, shell=True, capture_output=True, text=True)
     # stdout: standard output
     # stderr: standard error
@@ -14,27 +11,39 @@ def run_command(command):
         print(result.stderr)
     return result
 
-
-def initialize_git_repo(repo_path):
-    """Initialize a Git repository."""
+def initialize_dvc_git_repo(repo_path):
     os.chdir(repo_path)
     run_command('git init')
     run_command('dvc init')
     run_command('git add .dvc .gitignore')
     run_command('git commit -m "Initialize DVC project"')
 
+def add_remote(github_repo_url):
+    run_command(f'git remote add origin {github_repo_url}')
+    run_command('git push -u origin master')
+
 def configure_dvc_remote(repo_path, remote_name, drive_folder_id):
-    """Configure DVC remote storage with Google Drive."""
+    # Configure DVC remote storage with Google Drive.
     os.chdir(repo_path)
     run_command(f'dvc remote add -d {remote_name} gdrive://{drive_folder_id}')
-    run_command('dvc remote modify --local {remote_name} gdrive_use_service_account true')
+    run_command('git add .dvc/config')
+    run_command('git commit -m "Configure DVC remote storage"')
+    #run_command('dvc remote modify --local {remote_name} gdrive_use_service_account true')
 
-def track_and_push_data(repo_path, data_file):
-    """Track a data file with DVC and push to remote storage."""
+def add_and_track_data(repo_path, data_file):
+    # Adding for the first time a data file with DVC and pushing to remote storage.
     os.chdir(repo_path)
     run_command(f'dvc add {data_file}')
     run_command(f'git add {data_file}.dvc .gitignore')
     run_command('git commit -m "Track data file with DVC"')
+    run_command('dvc push')
+
+def change_and_version_data(repo_path, data_file):
+    # tracking changes and updates in the data
+    os.chdir(repo_path)
+    run_command(f'dvc add {data_file}')
+    run_command(f'git add {data_file}.dvc')
+    run_command('git commit -m "Update data file"')
     run_command('dvc push')
 
 def main():
@@ -44,18 +53,21 @@ def main():
     drive_folder_id = '14OTN7AaJJlXYzOuRuEjeCAldEEds4ZWN'
     github_repo_url = 'https://github.com/joudabihaidar/data-version-control-setup.git'
 
-    # Initializing a Git repository 
-    initialize_git_repo(repo_path)
+    # Initializing a Git and DVC repository 
+    initialize_dvc_git_repo(repo_path)
+
+    # adding a remote GitHub repository URL to the local Git repository
+    add_remote(github_repo_url)
 
     # Configuring DVC remote storage with Google Drive
     configure_dvc_remote(repo_path, remote_name, drive_folder_id)
 
     # Track data file with DVC and push to remote storage
-    track_and_push_data(repo_path, data_file)
+    add_and_track_data(repo_path, data_file)
 
     # Push changes to GitHub
-    run_command(f'git remote add origin {github_repo_url}')
-    run_command('git push -u origin master')
+    change_and_version_data(repo_path,data_file)
+
 
 if __name__ == "__main__":
     main()
